@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Oberkörper-Trainingsplan</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gym">
+<meta name="theme-color" content="#0f1115">
+<style>
+:root{
+  --bg:#0f1115;--card:#181b22;--card2:#20242d;--line:#2a2f3a;--text:#eef0f4;--mut:#9aa1ae;
+  --acc:#ff6a3d;--acc2:#ffb03d;--ok:#3ecf8e;--blue:#5aa9ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);padding-bottom:110px;-webkit-font-smoothing:antialiased}
+header{padding:calc(22px + env(safe-area-inset-top)) 16px 10px;max-width:760px;margin:0 auto}
+h1{font-size:24px;font-weight:800;letter-spacing:-.02em}
+.sub{color:var(--mut);font-size:13px;margin-top:4px}
+.sync{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;background:var(--card2);color:var(--mut);margin-top:8px}
+nav{position:sticky;top:0;z-index:5;background:rgba(15,17,21,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:6px;max-width:760px;margin:0 auto;padding:10px 16px;overflow-x:auto}
+.tab{flex:1;min-width:76px;border:1px solid var(--line);background:var(--card);color:var(--mut);border-radius:12px;padding:9px 6px;font:600 13px Inter;cursor:pointer;text-align:center}
+.tab small{display:block;font-weight:500;font-size:11px;opacity:.8}
+.tab.on{background:var(--acc);border-color:var(--acc);color:#fff}
+main{max-width:760px;margin:0 auto;padding:14px 16px}
+.intro{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:13.5px;line-height:1.5;color:#cfd3db;margin-bottom:14px}
+.intro b{color:var(--text)}
+.ex{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.exhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.num{font-size:11px;color:var(--acc2);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.exname{font-size:17px;font-weight:700;margin-top:2px}
+.scheme{background:var(--card2);border-radius:10px;padding:6px 10px;font-weight:700;font-size:14px;white-space:nowrap;text-align:center}
+.scheme small{display:block;font-weight:500;font-size:10.5px;color:var(--mut)}
+.tip{font-size:12.5px;color:var(--mut);margin:8px 0 10px;line-height:1.45}
+.row{display:grid;grid-template-columns:1fr 1.4fr;gap:8px}
+label{font-size:11px;color:var(--mut);font-weight:600;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+input,textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--text);font:500 15px Inter;padding:10px}
+input:focus,textarea:focus{outline:none;border-color:var(--acc)}
+.wwrap{display:flex;align-items:center;gap:4px}
+.wwrap input{text-align:center;font-weight:700}
+.pm{width:38px;height:42px;flex:none;border:1px solid var(--line);background:var(--card2);color:var(--text);border-radius:10px;font-size:18px;cursor:pointer}
+.sets{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.set{flex:1;min-width:58px}
+.set input{text-align:center;font-weight:700;padding:9px 4px}
+.set input.hit{border-color:var(--ok);color:var(--ok)}
+.last{font-size:12px;color:var(--mut);margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600}
+.up{background:rgba(62,207,142,.15);color:var(--ok)}
+.hold{background:rgba(90,169,255,.13);color:var(--blue)}
+.note{margin-top:8px;font-size:13px;padding:8px 10px}
+.btn{border:none;border-radius:14px;padding:14px;font:700 15px Inter;cursor:pointer;width:100%}
+.primary{background:var(--acc);color:#fff}
+.ghost{background:var(--card2);color:var(--text);border:1px solid var(--line)}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ok);color:#06180f;font-weight:700;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:20}
+.toast.show{opacity:1}
+.timer{position:fixed;left:0;right:0;bottom:0;background:rgba(24,27,34,.97);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:10}
+.timer .in{max-width:760px;margin:0 auto;display:flex;gap:8px;align-items:center}
+.clock{font:800 26px Inter;min-width:84px;font-variant-numeric:tabular-nums}
+.clock.done{color:var(--ok)}
+.tb{flex:1;border:1px solid var(--line);background:var(--card2);color:var(--text);border-radius:10px;padding:10px 0;font:600 13px Inter;cursor:pointer}
+.tb.stop{flex:.8;color:var(--acc)}
+.hist{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.hist h3{font-size:14px;display:flex;justify-content:space-between}
+.hist h3 span{color:var(--mut);font-weight:500;font-size:12px}
+.hist table{width:100%;border-collapse:collapse;margin-top:8px;font-size:12.5px}
+.hist td{padding:4px 0;border-top:1px solid var(--line);color:#cfd3db}
+.hist td:nth-child(2),.hist td:nth-child(3){text-align:right;white-space:nowrap;padding-left:8px}
+.del{background:none;border:none;color:var(--mut);font-size:12px;cursor:pointer;text-decoration:underline}
+select{width:100%;background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px;font:600 14px Inter;margin-bottom:10px}
+.prog{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+.bars{display:flex;align-items:flex-end;gap:4px;height:110px;margin-top:10px}
+.bar{flex:1;background:var(--acc);border-radius:4px 4px 0 0;position:relative;min-height:3px}
+.bar span{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:9.5px;color:var(--mut);white-space:nowrap}
+.empty{color:var(--mut);font-size:13px;text-align:center;padding:24px}
+h2{font-size:15px;margin:18px 0 10px}
+textarea{min-height:90px;font-size:12px;font-family:monospace}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}
+.modal.on{display:flex}
+.mbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;max-width:380px;width:100%}
+.mbox p{font-size:14px;line-height:1.5;margin-bottom:14px;color:#cfd3db}
+.mrow{display:flex;gap:8px}
+.xp summary{list-style:none;cursor:pointer;position:relative;padding-right:24px}
+.xp summary::-webkit-details-marker{display:none}
+.xp summary::after{content:"+";position:absolute;right:0;top:0;font-size:22px;color:var(--acc)}
+.xp[open] summary::after{content:"–"}
+.xb{margin-top:12px}
+.xb ol,.xb ul{margin:4px 0 12px 20px;font-size:14px;line-height:1.55;color:#cfd3db}
+.xb li{margin-bottom:4px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Oberkörper · 3er-Split</h1>
+  <div class="sub">Push · Pull · Oberkörper-Volumen — für Kurzhanteln, Langhantel, Bänke, Kabelturm (obere Rolle), Latzug, Rudern & Klimmzugstange</div>
+  <span class="sync" id="sync">Speicher wird verbunden …</span>
+</header>
+<nav><div class="tabs" id="tabs"></div></nav>
+<main id="main"></main>
+
+<div class="timer"><div class="in">
+  <div class="clock" id="clock">0:00</div>
+  <button class="tb" data-t="60">60 s</button>
+  <button class="tb" data-t="90">90 s</button>
+  <button class="tb" data-t="120">2 min</button>
+  <button class="tb" data-t="180">3 min</button>
+  <button class="tb stop" id="tstop">Stopp</button>
+</div></div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="mbox"><p id="mtext"></p><div class="mrow"><button class="btn ghost" id="mno">Abbrechen</button><button class="btn primary" id="myes">Ja</button></div></div></div>
+
+<script>
+const PLAN = {
+  A:{title:"Tag A",sub:"Push",desc:"Brust, Schultern, Trizeps",min:"ca. 55 min",ex:[
+    {id:"bank",n:"Bankdrücken (Langhantel)",s:3,r:[6,8],p:"2–3 min",inc:2.5,t:"Vorher 2 leichte Aufwärmsätze. Schulterblätter zusammen und nach unten, Füße fest am Boden. Ohne Ablage: Kurzhantel-Bankdrücken."},
+    {id:"schraegkh",n:"Schrägbankdrücken (Kurzhanteln)",s:3,r:[8,10],p:"2 min",inc:2,t:"Bank auf ca. 30°. Kontrolliert ablassen, unten kurz dehnen."},
+    {id:"schulterkh",n:"Schulterdrücken sitzend (Kurzhanteln)",s:3,r:[8,10],p:"2 min",inc:2,t:"Lehne fast senkrecht, Rumpf fest, nicht ins Hohlkreuz drücken."},
+    {id:"khfly",n:"Kurzhantel-Fliegende (flache Bank)",s:2,r:[12,15],p:"60–90 s",inc:2,t:"Arme leicht gebeugt fixieren, unten tief dehnen, oben nur bis kurz vor dem Zusammentreffen der Hanteln."},
+    {id:"seitkhA",ss:"Supersatz 1/2 – direkt danach Trizepsdrücken",n:"Seitheben (Kurzhanteln)",s:3,r:[12,15],p:"keine, dann 90 s",inc:1,t:"Bis Schulterhöhe, Ellbogen führt, kein Schwung."},
+    {id:"pushdown",ss:"Supersatz 2/2",n:"Trizepsdrücken am Kabel (Seil)",s:3,r:[10,12],p:"90 s",inc:2.5,t:"Ellbogen am Körper, unten Seil auseinanderziehen."},
+    {id:"overhead",n:"Überkopf-Trizepsstrecken am Kabel",s:2,r:[12,15],p:"60 s",inc:2.5,t:"Seil oben einhängen, mit dem Rücken zum Turm vorgebeugt nach vorn strecken. Dehnt den langen Trizepskopf. Alternative: einarmig mit Kurzhantel über Kopf."}
+  ]},
+  B:{title:"Tag B",sub:"Pull",desc:"Rücken, hintere Schulter, Bizeps",min:"ca. 50 min",ex:[
+    {id:"klimmzug",n:"Klimmzüge",s:3,r:[6,10],p:"2–3 min",inc:2.5,t:"Volle Streckung unten. Mehr als 10 sauber? Zusatzgewicht (Kurzhantel zwischen den Füßen). Gewichtsfeld = Zusatzgewicht."},
+    {id:"lhrudern",n:"Langhantelrudern vorgebeugt",s:3,r:[8,10],p:"2 min",inc:2.5,t:"Oberkörper ca. 45°, Rücken gerade, Stange zum Bauchnabel ziehen."},
+    {id:"kabelrudern",n:"Rudern am Kabel (enger Griff)",s:3,r:[10,12],p:"90 s",inc:2.5,t:"Brust raus, Schulterblätter am Ende aktiv zusammenziehen, nicht mit dem Oberkörper schwingen."},
+    {id:"facepull",ss:"Supersatz 1/2 – direkt danach Langhantel-Curls",n:"Face Pulls (Kabelturm, Seil)",s:3,r:[15,20],p:"keine, dann 90 s",inc:2.5,t:"Seil oben einhängen, ein Schritt zurück, schräg nach unten zum Gesicht ziehen und Hände nach außen drehen."},
+    {id:"lhcurl",ss:"Supersatz 2/2",n:"Langhantel-Curls",s:3,r:[8,10],p:"90 s",inc:2.5,t:"Ellbogen bleiben stehen, kein Schwung aus dem Rücken."},
+    {id:"hammer",n:"Hammercurls (Kurzhanteln)",s:2,r:[10,12],p:"60 s",inc:2,t:"Neutraler Griff, abwechselnd oder gleichzeitig."}
+  ]},
+  C:{title:"Tag C",sub:"Oberkörper",desc:"Volumen, Schultern & Arme",min:"ca. 55 min",ex:[
+    {id:"schraeglh",n:"Schrägbankdrücken (Langhantel)",s:3,r:[6,8],p:"2–3 min",inc:2.5,t:"Vorher 2 leichte Aufwärmsätze. Ohne Ablage alternativ Kurzhanteln. Stange zur oberen Brust."},
+    {id:"einarmrudern",n:"Einarmiges Kurzhantelrudern",s:3,r:[8,12],p:"90 s",inc:2,t:"Knie und Hand auf der Bank, Hantel Richtung Hüfte ziehen."},
+    {id:"latuntergriff",n:"Latzug Untergriff (eng)",s:3,r:[10,12],p:"90 s",inc:2.5,t:"Schulterbreit im Untergriff, nimmt auch den Bizeps mit."},
+    {id:"seitkh",ss:"Supersatz 1/2 – direkt danach Reverse Flys",n:"Seitheben (Kurzhanteln)",s:3,r:[12,15],p:"keine, dann 90 s",inc:1,t:"Bis Schulterhöhe, kleiner Finger leicht höher, kein Schwung."},
+    {id:"revkh",ss:"Supersatz 2/2",n:"Reverse Flys (Kurzhanteln, Brust auf Schrägbank)",s:3,r:[15,20],p:"90 s",inc:1,t:"Bäuchlings auf die Schrägbank (ca. 30°), Arme seitlich anheben, Schulterblätter nur leicht zusammenziehen."},
+    {id:"inclinecurl",ss:"Supersatz 1/2 – direkt danach French Press",n:"Schrägbank-Curls (Kurzhanteln)",s:3,r:[10,12],p:"keine, dann 90 s",inc:1,t:"Rücken an die Schrägbank (ca. 45°), Arme hängen hinter dem Körper: maximale Dehnung des Bizeps."},
+    {id:"skull",ss:"Supersatz 2/2",n:"French Press (Kurzhanteln, liegend)",s:3,r:[10,12],p:"90 s",inc:2,t:"Ellbogen zeigen zur Decke, Hanteln neben den Kopf senken."}
+  ]}
+};
+const EXPL = {
+  bank:{m:"Große Brustmuskulatur, vordere Schulter, Trizeps",a:["Auf die Bank legen, Augen unter der Stange. Füße fest auf den Boden.","Schulterblätter zusammen- und nach unten ziehen, leichter Bogen im oberen Rücken.","Griff etwas breiter als schulterbreit, Handgelenke gerade über den Ellbogen.","Stange kontrolliert zur unteren Brust senken, Ellbogen ca. 45–60° vom Körper.","Kraftvoll nach oben drücken, ohne dass der Po von der Bank abhebt."],f:["Ellbogen 90° seitlich abgespreizt – belastet die Schulter","Stange auf der Brust abfedern lassen","Schulterblätter lösen sich beim Drücken"]},
+  schraegkh:{m:"Obere Brust, vordere Schulter, Trizeps",a:["Bank auf ca. 30° stellen – steiler wird es eine Schulterübung.","Hanteln mit Schwung vom Knie auf die Brust bringen, Schulterblätter fixieren.","Hanteln seitlich der oberen Brust ablassen, Unterarme senkrecht.","Leicht bogenförmig nach oben drücken, oben nicht aneinanderschlagen."],f:["Bank zu steil","Bewegung zu kurz – unten ruhig tief dehnen"]},
+  schulterkh:{m:"Vordere und seitliche Schulter, Trizeps",a:["Lehne fast senkrecht (ca. 80–90°), Rücken fest an der Lehne.","Hanteln auf Schulterhöhe, Handflächen nach vorn oder leicht zueinander.","Senkrecht nach oben drücken, bis die Arme fast gestreckt sind.","Kontrolliert bis etwa Ohrhöhe oder etwas darunter senken."],f:["Starkes Hohlkreuz – Bauch anspannen","Gewicht zu schwer, Bewegung nur halb"]},
+  khfly:{m:"Brust (besonders in der Dehnung)",a:["Flach auf die Bank, Hanteln über der Brust, Handflächen zueinander.","Ellbogen leicht gebeugt und in dieser Stellung fixieren.","Arme in einem weiten Bogen seitlich senken, bis Du eine deutliche Dehnung spürst.","Im selben Bogen zurückführen, als würdest Du einen Baum umarmen."],f:["Arme beugen und strecken – dann wird es ein Drücken","Zu schwer: Schulter wird überdehnt"]},
+  seitkhA:{m:"Seitliche Schulter (für breitere Schultern)",a:["Aufrecht stehen, leicht vorgebeugt, Hanteln seitlich neben den Oberschenkeln.","Arme leicht gebeugt seitlich anheben – der Ellbogen führt, nicht die Hand.","Bis etwa Schulterhöhe, kleiner Finger minimal höher als der Daumen.","Langsam (2–3 s) absenken, unten nicht ganz ablegen."],f:["Schwung aus dem Oberkörper","Schultern zu den Ohren hochziehen (Nacken übernimmt)","Zu schwer – lieber leicht und sauber"]},
+  pushdown:{m:"Trizeps (seitlicher Kopf)",a:["Seil oben am Kabelturm einhängen, vor den Turm stellen, leicht vorgebeugt.","Oberarme eng am Körper fixieren.","Seil nach unten drücken, unten die Enden nach außen auseinanderziehen.","Langsam zurück, bis die Unterarme etwa waagerecht sind."],f:["Ellbogen wandern nach vorn","Oberkörper drückt mit"]},
+  overhead:{m:"Trizeps (langer Kopf, der größte Teil)",a:["Seil oben einhängen, mit dem Rücken zum Turm stellen, ein Fuß vor.","Seil hinter dem Kopf greifen, Oberkörper leicht nach vorn lehnen.","Oberarme neben dem Kopf fixieren und die Arme nach vorn-oben strecken.","Langsam zurück in die tiefe Dehnung hinter dem Kopf."],f:["Ellbogen gehen weit auseinander","Zu wenig Dehnung – genau die macht die Übung wertvoll"]},
+  klimmzug:{m:"Breiter Rückenmuskel (Latissimus), Bizeps, oberer Rücken",a:["Stange etwas breiter als schulterbreit im Obergriff fassen.","Aus dem vollständigen Hang starten, Schultern zuerst nach unten ziehen.","Brust zur Stange ziehen, Ellbogen Richtung Hüfte führen.","Kontrolliert ganz herablassen. Mehr als 10 Wdh.: Zusatzgewicht."],f:["Halbe Wiederholungen ohne Streckung","Schwingen (Kipping)","Kinn über die Stange recken statt Brust ziehen"]},
+  lhrudern:{m:"Gesamter Rücken, hintere Schulter, Bizeps",a:["Stange schulterbreit greifen, Knie leicht gebeugt.","Hüfte nach hinten schieben, Oberkörper ca. 45° vorgeneigt, Rücken gerade.","Stange zum Bauchnabel ziehen, Ellbogen nah am Körper.","Oben Schulterblätter zusammen, langsam absenken."],f:["Runder Rücken – Verletzungsgefahr","Oberkörper richtet sich mit jeder Wiederholung auf"]},
+  kabelrudern:{m:"Mittlerer Rücken, Latissimus, hintere Schulter",a:["Füße an die Platten, Knie leicht gebeugt, enger Griff.","Aufrecht sitzen, Brust raus.","Griff zum Bauch ziehen, Ellbogen eng am Körper nach hinten.","Schulterblätter am Ende aktiv zusammenziehen, dann langsam nach vorn strecken lassen."],f:["Mit dem Oberkörper vor und zurück schaukeln","Schultern nach oben ziehen"]},
+  facepull:{m:"Hintere Schulter, Rotatorenmanschette, oberer Rücken",a:["Seil oben einhängen, mit beiden Händen im Obergriff fassen, zwei Schritte zurück.","Seil zum Gesicht ziehen, Ellbogen hoch und weit außen.","Am Ende die Hände nach außen drehen (wie ein Doppelbizeps-Posing).","Kurz halten, dann langsam zurück."],f:["Zu schwer – dann zieht der Rücken statt der Schulter","Ellbogen fallen nach unten"]},
+  lhcurl:{m:"Bizeps",a:["Aufrecht stehen, Stange schulterbreit im Untergriff.","Oberarme an den Körper legen und fixieren.","Stange nach oben curlen, bis der Bizeps voll angespannt ist.","Langsam (2–3 s) ganz herablassen."],f:["Schwung aus dem Rücken","Ellbogen wandern nach vorn","Unten nicht ganz strecken"]},
+  hammer:{m:"Brachialis (unter dem Bizeps), Unterarm, Bizeps",a:["Hanteln im neutralen Griff (Daumen zeigen nach vorn).","Oberarme fixieren, Hantel Richtung Schulter curlen.","Abwechselnd oder gleichzeitig, langsam ablassen."],f:["Hanteln drehen sich ein","Schwung"]},
+  schraeglh:{m:"Obere Brust, vordere Schulter, Trizeps",a:["Bank auf ca. 30°, Griff wie beim Bankdrücken.","Schulterblätter fixieren, Stange zur oberen Brust (unter dem Schlüsselbein) senken.","Senkrecht nach oben drücken. Ohne Ablage mit Kurzhanteln ausführen."],f:["Bank zu steil","Po hebt ab"]},
+  einarmrudern:{m:"Latissimus, mittlerer Rücken",a:["Ein Knie und eine Hand auf die Bank, Rücken waagerecht und gerade.","Hantel hängt frei unter der Schulter.","Hantel in einem Bogen Richtung Hüfte ziehen, Ellbogen nah am Körper.","Unten die Schulter bewusst nach unten dehnen lassen."],f:["Oberkörper dreht mit auf","Zur Brust statt zur Hüfte ziehen"]},
+  latuntergriff:{m:"Latissimus, Bizeps",a:["Stange schulterbreit im Untergriff, Oberschenkel unter die Polster.","Leicht zurücklehnen, Brust raus.","Stange zur oberen Brust ziehen, Ellbogen nach unten und hinten.","Langsam hoch, bis die Arme ganz gestreckt sind."],f:["Weit zurückfallen und mit Schwung ziehen","Arme oben nicht strecken"]},
+  seitkh:{m:"Seitliche Schulter",a:["Wie an Tag A: leicht vorgebeugt, Ellbogen führt.","Bis Schulterhöhe heben, langsam ablassen.","Direkt danach ohne Pause die Reverse Flys."],f:["Schwung","Nacken zieht mit"]},
+  revkh:{m:"Hintere Schulter, oberer Rücken",a:["Bank auf ca. 30°, bäuchlings mit der Brust auflegen.","Hanteln hängen nach unten, Arme leicht gebeugt.","Arme seitlich nach außen anheben, bis sie etwa waagerecht sind.","Langsam absenken."],f:["Schulterblätter zu stark zusammenziehen – dann arbeitet der mittlere Rücken","Zu schwer"]},
+  inclinecurl:{m:"Bizeps (langer Kopf, in der Dehnung)",a:["Bank auf ca. 45°, Rücken anlehnen, Arme hängen senkrecht nach unten.","Oberarme bleiben hinter dem Körper.","Hanteln nach oben curlen, Handflächen dabei nach oben drehen.","Ganz langsam in die tiefe Dehnung zurück."],f:["Schultern rollen nach vorn","Gewicht zu schwer – die Übung ist bewusst leichter"]},
+  skull:{m:"Trizeps (vor allem langer Kopf)",a:["Flach auf die Bank, Hanteln mit gestreckten Armen über der Brust.","Oberarme leicht nach hinten neigen und fixieren.","Nur die Unterarme beugen, Hanteln neben den Kopf senken.","Wieder strecken, ohne die Oberarme zu bewegen."],f:["Ellbogen gehen weit auseinander","Oberarme bewegen sich mit – dann wird es ein Drücken"]}
+};
+const ORDER=["A","B","C"];
+let state={cur:{},log:[]};
+let tab="A";
+let db=null, docRef=null, saveTimer=null;
+const LS="okp-tracker-v1";
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=n=>(n===""||n==null||isNaN(n))?"–":String(+(+n).toFixed(2)).replace(".",",");
+const num=v=>{v=String(v).replace(",",".");return v===""?"":+v};
+
+function allEx(){const m={};ORDER.forEach(k=>PLAN[k].ex.forEach(e=>m[e.id]={...e,day:k}));return m}
+function lastEntry(id){for(let i=state.log.length-1;i>=0;i--){const e=state.log[i].e[id];if(e)return {...e,date:state.log[i].d}}return null}
+function cur(id){return state.cur[id]||(state.cur[id]={w:"",set:"",reps:[],note:""})}
+
+function verdict(ex,last){
+  if(!last||!last.reps||!last.reps.length)return "";
+  const done=last.reps.filter(r=>r!=="").map(Number);
+  if(done.length<ex.s)return "";
+  if(done.every(r=>r>=ex.r[1]))return `<span class="pill up">Alle Sätze am Limit · jetzt +${fmt(ex.inc)} kg</span>`;
+  return `<span class="pill hold">Gewicht halten · Wdh. steigern</span>`;
+}
+
+function renderTabs(){
+  $("#tabs").innerHTML=ORDER.map(k=>`<button class="tab ${tab===k?"on":""}" data-tab="${k}">${PLAN[k].title}<small>${PLAN[k].sub}</small></button>`).join("")+
+  `<button class="tab ${tab==="E"?"on":""}" data-tab="E">Übungen<small>Erklärungen</small></button>`+
+  `<button class="tab ${tab==="H"?"on":""}" data-tab="H">Verlauf<small>${state.log.length} Einheiten</small></button>`;
+}
+
+function renderDay(k){
+  const d=PLAN[k];
+  let h=`<div class="intro"><b>${d.title} – ${d.sub}:</b> ${d.desc} · <b>${d.min}</b> inkl. 5 min Aufwärmen. Trag Gewicht und Einstellung ein, dann pro Satz die geschafften Wiederholungen. Bei Supersätzen machst Du beide Übungen direkt hintereinander und pausierst erst danach. Erreichst Du in <b>allen</b> Sätzen das obere Ende der Spanne, wird beim nächsten Mal mehr Gewicht vorgeschlagen.</div>`;
+  d.ex.forEach((ex,i)=>{
+    const c=cur(ex.id), last=lastEntry(ex.id);
+    let sets="";
+    for(let s=0;s<ex.s;s++){
+      const v=c.reps[s]??"";const ph=last&&last.reps&&last.reps[s]!==undefined&&last.reps[s]!==""?last.reps[s]:ex.r[1];
+      sets+=`<div class="set"><label>Satz ${s+1}</label><input inputmode="numeric" data-rep="${ex.id}" data-i="${s}" value="${esc(v)}" placeholder="${esc(ph)}" class="${v!==""&&+v>=ex.r[1]?"hit":""}"></div>`;
+    }
+    h+=`<div class="ex">
+      <div class="exhead"><div><div class="num">Übung ${i+1}${ex.ss?` · <span style="color:var(--blue)">${esc(ex.ss)}</span>`:""}</div><div class="exname">${esc(ex.n)}</div></div>
+      <div class="scheme">${ex.s} × ${ex.r[0]}–${ex.r[1]}<small>Pause ${ex.p}</small></div></div>
+      <div class="tip">${esc(ex.t)}</div>
+      <div class="row">
+        <div><label>Gewicht (kg)</label><div class="wwrap"><button class="pm" data-pm="-" data-id="${ex.id}">−</button><input inputmode="decimal" data-w="${ex.id}" value="${esc(c.w===""?"":String(c.w).replace(".",","))}" placeholder="${last?esc(fmt(last.w)):"0"}"><button class="pm" data-pm="+" data-id="${ex.id}">+</button></div></div>
+        <div><label>Einstellung</label><input data-set="${ex.id}" value="${esc(c.set)}" placeholder="${last&&last.set?esc(last.set):"z. B. Sitz 4, Rolle 12"}"></div>
+      </div>
+      <div class="sets">${sets}</div>
+      <input class="note" data-note="${ex.id}" value="${esc(c.note)}" placeholder="Notiz (optional)">
+      <div class="last">${last?`Letztes Mal (${new Date(last.date).toLocaleDateString("de-DE")}): <b>${fmt(last.w)} kg</b> · ${last.reps.map(r=>r===""?"–":r).join(" / ")}${last.set?` · ${esc(last.set)}`:""}`:"Noch kein Eintrag"} ${verdict(ex,last)}</div>
+    </div>`;
+  });
+  h+=`<button class="btn primary" id="finish">Einheit abschließen & speichern</button>`;
+  return h;
+}
+
+function renderHist(){
+  const m=allEx();
+  let h=`<div class="prog"><label>Fortschritt einer Übung</label><select id="pick">${Object.values(m).map(e=>`<option value="${e.id}">${PLAN[e.day].title} · ${esc(e.n)}</option>`).join("")}</select><div id="chart"></div></div>`;
+  h+=`<h2>Alle Einheiten</h2>`;
+  if(!state.log.length)h+=`<div class="empty">Noch keine Einheit abgeschlossen.</div>`;
+  [...state.log].map((x,i)=>[x,i]).reverse().forEach(([s,i])=>{
+    h+=`<div class="hist"><h3>${PLAN[s.k].title} – ${PLAN[s.k].sub}<span>${new Date(s.d).toLocaleDateString("de-DE",{weekday:"short",day:"2-digit",month:"2-digit",year:"2-digit"})}</span></h3><table>`;
+    Object.entries(s.e).forEach(([id,e])=>{h+=`<tr><td>${esc(m[id]?m[id].n:id)}${e.set?` <span style="color:var(--mut)">(${esc(e.set)})</span>`:""}</td><td><b>${fmt(e.w)} kg</b></td><td>${e.reps.map(r=>r===""?"–":r).join("/")}</td></tr>`});
+    h+=`</table><div style="text-align:right;margin-top:6px"><button class="del" data-del="${i}">Einheit löschen</button></div></div>`;
+  });
+  h+=`<h2>Sicherung</h2><div class="intro">Deine Daten werden automatisch auf diesem Gerät gespeichert. Über die Sicherung kannst Du sie auch zwischen der Online- und der Offline-Version übertragen. Zusätzlich kannst Du hier eine Sicherung kopieren oder wiederherstellen.</div>
+  <textarea id="bk" placeholder="Sicherung hier einfügen …"></textarea>
+  <div class="mrow" style="margin-top:8px"><button class="btn ghost" id="copy">Sicherung kopieren</button><button class="btn ghost" id="restore">Wiederherstellen</button></div>`;
+  return h;
+}
+
+function drawChart(id){
+  const pts=state.log.filter(s=>s.e[id]&&s.e[id].w!=="").map(s=>({d:s.d,w:+s.e[id].w,v:s.e[id].reps.reduce((a,r)=>a+(+r||0),0)}));
+  const el=$("#chart");if(!el)return;
+  if(!pts.length){el.innerHTML=`<div class="empty">Noch keine Daten für diese Übung.</div>`;return}
+  const p=pts.slice(-14),mx=Math.max(...p.map(x=>x.w))||1;
+  el.innerHTML=`<div class="bars" style="margin-top:22px">${p.map(x=>`<div class="bar" style="height:${Math.max(4,x.w/mx*100)}%"><span>${fmt(x.w)}</span></div>`).join("")}</div>
+  <div style="font-size:11px;color:var(--mut);margin-top:6px">Arbeitsgewicht der letzten ${p.length} Einheiten · Bestwert ${fmt(mx)} kg</div>`;
+}
+
+function renderExpl(){
+  let h=`<div class="intro"><b>Grundregeln</b><br>• 5 min locker aufwärmen (z. B. Rudergerät, Armkreisen), bei der ersten Übung 2 leichte Aufwärmsätze.<br>• Jeder Arbeitssatz endet 1–2 Wiederholungen vor dem Punkt, an dem nichts mehr geht.<br>• Technik vor Gewicht: Jede Wiederholung kontrolliert, das Absenken dauert 2–3 Sekunden.<br>• Schaffst Du in allen Sätzen das obere Ende der Spanne, steigerst Du beim nächsten Mal das Gewicht.<br>• Bei stechendem Gelenkschmerz: Übung abbrechen und die Ausführung prüfen.</div>`;
+  ORDER.forEach(k=>{
+    h+=`<h2>${PLAN[k].title} – ${PLAN[k].sub}</h2>`;
+    PLAN[k].ex.forEach(ex=>{const x=EXPL[ex.id];if(!x)return;
+      h+=`<details class="ex xp"><summary><div class="exname">${esc(ex.n)}</div><div class="tip" style="margin:4px 0 0">${esc(x.m)}</div></summary>
+      <div class="xb"><label>Ausführung</label><ol>${x.a.map(t=>`<li>${esc(t)}</li>`).join("")}</ol>
+      <label>Häufige Fehler</label><ul>${x.f.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>
+      <div class="tip">${ex.s} Sätze × ${ex.r[0]}–${ex.r[1]} Wdh. · Pause ${ex.p}</div></div></details>`;
+    });
+  });
+  return h;
+}
+function render(){
+  renderTabs();
+  $("#main").innerHTML=tab==="H"?renderHist():tab==="E"?renderExpl():renderDay(tab);
+  if(tab==="H"){const s=$("#pick");drawChart(s.value);s.onchange=()=>drawChart(s.value)}
+}
+
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1800)}
+function ask(t){return new Promise(res=>{$("#mtext").textContent=t;$("#modal").classList.add("on");$("#myes").onclick=()=>{$("#modal").classList.remove("on");res(true)};$("#mno").onclick=()=>{$("#modal").classList.remove("on");res(false)}})}
+
+/* ---------- Speichern ---------- */
+function save(){
+  try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{if(!docRef)return;try{await docRef.set({json:JSON.stringify(state),t:Date.now()})}catch(e){$("#sync").textContent="Cloud-Speichern fehlgeschlagen – lokal gesichert"}},800);
+}
+function loadLocal(){try{const s=JSON.parse(localStorage.getItem(LS));if(s&&s.cur)state=s}catch(e){}}
+async function connect(){
+  if(typeof claude==="undefined"){$("#sync").textContent="Offline-App · auf diesem Gerät gespeichert";return}
+  const timeout=setTimeout(()=>{if(!docRef)$("#sync").textContent="Nur auf diesem Gerät gespeichert"},10000);
+  try{
+    db=await claude.use("db");const user=await claude.use("user");
+    if(!db||!user){clearTimeout(timeout);$("#sync").textContent="Nur auf diesem Gerät gespeichert";return}
+    const id=await user.id();
+    docRef=db.collection("data/users/"+id).doc("tracker");
+    const r=await docRef.get();const d=r&&typeof r.data==="function"?r.data():r;
+    clearTimeout(timeout);
+    if(d&&d.json){const s=JSON.parse(d.json);if(s&&s.cur){state=s;try{localStorage.setItem(LS,d.json)}catch(e){}render()}}
+    else if(state.log.length||Object.keys(state.cur).length){save()}
+    $("#sync").textContent="✓ In Deinem Konto gespeichert – auf allen Geräten";
+  }catch(e){clearTimeout(timeout);$("#sync").textContent="Nur auf diesem Gerät gespeichert"}
+}
+
+/* ---------- Eingaben ---------- */
+document.addEventListener("input",e=>{
+  const t=e.target,ds=t.dataset;
+  if(ds.w){cur(ds.w).w=num(t.value)}
+  else if(ds.set){cur(ds.set).set=t.value}
+  else if(ds.note){cur(ds.note).note=t.value}
+  else if(ds.rep){const c=cur(ds.rep);c.reps[+ds.i]=t.value.replace(/\D/g,"");const ex=allEx()[ds.rep];t.classList.toggle("hit",t.value!==""&&+t.value>=ex.r[1])}
+  else return;
+  save();
+});
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("button");if(!t)return;const ds=t.dataset;
+  if(ds.tab){tab=ds.tab;render();scrollTo(0,0)}
+  else if(ds.pm){const ex=allEx()[ds.id],c=cur(ds.id),last=lastEntry(ds.id);let w=c.w===""?(last?+last.w||0:0):+c.w;w=Math.max(0,+(w+(ds.pm==="+"?ex.inc:-ex.inc)).toFixed(2));c.w=w;document.querySelector(`[data-w="${ds.id}"]`).value=String(w).replace(".",",");save()}
+  else if(t.id==="finish"){
+    const entries={};
+    PLAN[tab].ex.forEach(ex=>{const c=cur(ex.id),last=lastEntry(ex.id);const reps=Array.from({length:ex.s},(_,i)=>c.reps[i]??"");
+      if(reps.some(r=>r!=="")){entries[ex.id]={w:c.w===""?(last?last.w:""):c.w,set:c.set||(last?last.set:"")||"",reps,note:c.note||""}}});
+    if(!Object.keys(entries).length){toast("Bitte erst Wiederholungen eintragen");return}
+    state.log.push({k:tab,d:new Date().toISOString(),e:entries});
+    PLAN[tab].ex.forEach(ex=>{const c=cur(ex.id);if(entries[ex.id]){c.w=entries[ex.id].w;c.set=entries[ex.id].set}c.reps=[];c.note=""});
+    save();render();scrollTo(0,0);toast("Einheit gespeichert 💪");
+  }
+  else if(ds.del!==undefined){if(await ask("Diese Einheit wirklich löschen?")){state.log.splice(+ds.del,1);save();render()}}
+  else if(t.id==="copy"){const txt=JSON.stringify(state);$("#bk").value=txt;try{await navigator.clipboard.writeText(txt);toast("Sicherung kopiert")}catch(err){$("#bk").select();toast("Text markiert – bitte kopieren")}}
+  else if(t.id==="restore"){try{const s=JSON.parse($("#bk").value);if(!s.cur||!s.log)throw 0;if(await ask("Aktuelle Daten durch die Sicherung ersetzen?")){state=s;save();render();toast("Wiederhergestellt")}}catch(err){toast("Ungültige Sicherung")}}
+  else if(ds.t){startTimer(+ds.t)}
+  else if(t.id==="tstop"){stopTimer()}
+});
+
+/* ---------- Pausentimer ---------- */
+let tEnd=0,tInt=null;
+function startTimer(s){tEnd=Date.now()+s*1000;clearInterval(tInt);tick();tInt=setInterval(tick,250)}
+function stopTimer(){clearInterval(tInt);$("#clock").textContent="0:00";$("#clock").classList.remove("done")}
+function tick(){const r=Math.max(0,Math.round((tEnd-Date.now())/1000));$("#clock").textContent=Math.floor(r/60)+":"+String(r%60).padStart(2,"0");$("#clock").classList.toggle("done",r===0);if(r===0){clearInterval(tInt);try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}}
+
+loadLocal();render();connect();
+if("serviceWorker" in navigator&&location.protocol.startsWith("http")){navigator.serviceWorker.register("sw.js").catch(()=>{})}
+</script>
+</body>
+</html>
